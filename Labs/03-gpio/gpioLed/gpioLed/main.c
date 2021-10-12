@@ -47,10 +47,13 @@ int main(void)
     // Infinite loop
     while (1)
     {
-        // Pause several milliseconds
-        _delay_ms(BLINK_DELAY);
-        GPIO_toggle(&PORTB, LED_GREEN);
-        GPIO_toggle(&PORTC, LED_SECOND);
+		if (bit_is_clear(PIND, 2))
+		{
+			// Pause several milliseconds
+		    _delay_ms(BLINK_DELAY);
+            GPIO_toggle(&PORTB, LED_GREEN);
+            GPIO_toggle(&PORTC, LED_SECOND);
+		}
     }
 
     // Will never reach this

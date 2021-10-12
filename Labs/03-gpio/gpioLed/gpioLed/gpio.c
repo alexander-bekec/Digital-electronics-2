@@ -82,5 +82,7 @@ void GPIO_toggle(volatile uint8_t *reg_name, uint8_t pin_num)
  **********************************************************************/
 uint8_t GPIO_read(volatile uint8_t *reg_name, uint8_t pin_num)
 {
+	uint8_t bit_value;
+	bit_value = (*reg_name>>pin_num) & 1;
     return *reg_name;
 }
