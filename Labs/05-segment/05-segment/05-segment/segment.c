@@ -30,7 +30,8 @@ uint8_t segment_value[] = {
     0b01000001,     // Digit 6
     0b00011111,     // Digit 7
     0b00000001,     // Digit 8
-    0b00001001      // Digit 9
+    0b00001001,     // Digit 9
+	0b11111111      // Clear digit
 };
 
 // Active-high position 0 to 3
@@ -137,7 +138,20 @@ void SEG_update_shift_regs(uint8_t segments, uint8_t position)
 /**********************************************************************
  * Function: SEG_clear()
  **********************************************************************/
-
+void SEG_clear(void) 
+{
+	SEG_update_shift_regs(10, 0);
+	SEG_update_shift_regs(10, 1);
+	SEG_update_shift_regs(10, 2);
+	SEG_update_shift_regs(10, 3);	
+}
 /**********************************************************************
  * Function: SEG_clk_2us()
  **********************************************************************/
+void SEG_clk_2us(void)
+{
+	GPIO_write_high(&PORTD, SEG_CLK);
+	_delay_us(1);
+	GPIO_write_low(&PORTD, SEG_CLK);
+    _delay_us(1);
+}
