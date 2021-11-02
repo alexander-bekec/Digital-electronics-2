@@ -91,7 +91,7 @@ int main(void)
     
     lcd_gotoxy(1, 0);
     // Display first custom character
-    lcd_putc(5);
+    // lcd_putc(5);
 
     // Configure 8-bit Timer/Counter2 for Stopwatch
     // Set the overflow prescaler to 16 ms and enable interrupt
@@ -155,7 +155,7 @@ ISR(TIMER2_OVF_vect)
         itoa(sec, s, 10);
         itoa(tenths_sec, ds, 10);
         
-        /*
+        
         lcd_gotoxy(1, 0);
         lcd_puts("00:");
         lcd_gotoxy(4, 0);
@@ -166,7 +166,6 @@ ISR(TIMER2_OVF_vect)
         lcd_putc('.');
         lcd_gotoxy(7, 0);
         lcd_puts(ds);
-*/
     }
     // Else do nothing and exit the ISR
 }
