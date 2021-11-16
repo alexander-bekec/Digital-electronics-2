@@ -56,6 +56,11 @@ int main(void)
 
     // Put strings to ringbuffer for transmitting via UART
     uart_puts("\r\nScan I2C-bus for devices:\r\n");
+    uart_puts("\r\n");
+    uart_puts("\r\n      .0 .1 .2 .3 .4 ");
+    //uart_puts(".5 .6 .7 .8 .9 .a .b .c .d .e .f");
+    uart_puts("\r\n0x0.: RA RA RA RA RA RA RA RA ");
+    
 
     // Infinite loop
     while (1)
@@ -80,8 +85,10 @@ ISR(TIMER1_OVF_vect)
     static state_t state = STATE_IDLE;  // Current state of the FSM
     static uint8_t addr = 7;            // I2C slave address
     uint8_t result = 1;                 // ACK result from the bus
-    char uart_string_dec[] = "000"; // String for converting numbers by itoa()
-    char uart_string_bin[] = "0000000";
+    char uart_string_line[] = "000";     // String for converting numbers by itoa()
+    char uart_string[] = "000";
+    
+    /*
     char uart_humidity_integer[] = "000";
     char uart_humidity_fractional[] = "000";
     char uart_temperature_integer[] = "000";
@@ -94,7 +101,6 @@ ISR(TIMER1_OVF_vect)
     static uint8_t temperature_fractional = 0;
     static uint8_t checksum = 0;
     
-    /* 
     if (addr == 92) {
         twi_start((addr<<1) + TWI_READ);
         humidity_integer = twi_read_ack();
@@ -137,7 +143,12 @@ ISR(TIMER1_OVF_vect)
         else {
             addr = 7;
             state = STATE_IDLE;
+            uart_puts("RA RA RA RA RA RA RA RA ");
+            uart_puts("\r\n");
+            uart_puts("\r\n      .0 .1 .2 .3 .4 .5 .6 .7 .8 .9 .a .b .c .d .e .f");
+            uart_puts("\r\n0x0.: RA RA RA RA RA RA RA RA ");
         }
+        
         break;
     
     // Transmit I2C slave address and get result
@@ -153,17 +164,33 @@ ISR(TIMER1_OVF_vect)
         twi_stop();
         /* Test result from I2C bus. If it is 0 then move to ACK state, 
          * otherwise move to IDLE */
+        if (addr % 16 == 0) {
+            uart_puts("\n\r0x");
+            itoa(addr / 16, uart_string_line, 16);
+            uart_puts(uart_string_line);
+            uart_puts(".: ");
+        }
+        
         if (result == 0) {
-            state = STATE_ACK;   
+            state = STATE_ACK;
+            
         }
         else {
             state = STATE_IDLE;
+            uart_puts("-- ");
         }
         break;
 
     // A module connected to the bus was found
     case STATE_ACK:
         // Send info about active I2C slave to UART and move to IDLE
+        itoa(addr, uart_string, 16);
+        uart_puts(uart_string);
+        uart_puts(" ");
+        
+        /*
+        uart_puts("\n\r      .0 .1 .2 .3 .4 .5 .6 .7 .8 .9 .a .b .c .d .e .f");
+        uart_puts("\n\r0x0.: RA RA RA RA RA RA RA RA ");
         itoa(addr, uart_string_dec, 10);
         itoa(addr, uart_string_bin, 16);
         uart_puts("Address found: ");
@@ -172,6 +199,7 @@ ISR(TIMER1_OVF_vect)
         uart_puts(uart_string_bin);
         uart_puts("]");
         uart_puts("\n\r");
+        */
                
         state = STATE_IDLE;
         break;
